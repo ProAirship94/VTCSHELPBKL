@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study Hub Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
+
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>V.T.C.S_Exams.help — Fire Mode + Bookmarks</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Base / variables ---------- */
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --p:#6366f1; --s:#8b5cf6; --a:#ec4899;
+    --bg:#020617; --bg2:#1e1b4b;
+    --light:#f1f5f9; --dark:#0f172a;
+    --card-border: rgba(99,102,241,.2);
+    --accent-glow: 0 10px 40px rgba(99,102,241,.18);
+    --fire-on: 0;
+  }
+  html,body{height:100%}
+  body{
+    background: linear-gradient(135deg,var(--bg),var(--bg2));
+    color:var(--light);
+    font-family:Poppins,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+    min-height:100vh; overflow-x:hidden; transition:background .35s,color .35s;
+  }
+
+  /* ---------- Header ---------- */
+  .header{
+    background: rgba(15,23,42,.72);
+    backdrop-filter: blur(18px);
+    padding:3rem 2rem; text-align:center;
+    border-bottom:2px solid rgba(99,102,241,.12);
+    box-shadow:0 8px 32px rgba(0,0,0,.35);
+    position:relative;
+    z-index:50;
+  }
+  .logo{font-size:4.8rem; animation:float 3s ease-in-out infinite; cursor:pointer}
+  .header h1{
+    font-size:2.6rem;
+    margin:1rem 0;
+    font-weight:800;
+    background: linear-gradient(135deg,var(--p),var(--s),var(--a));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .header p{color:#94a3b8;font-size:1.02rem}
+
+  /* ---------- Controls (top-right) ---------- */
+  .controls{
+    position:fixed; top:16px; right:16px; display:flex; gap:.6rem; z-index:1200;
+  }
+  .btn{
+    padding:.7rem 1rem; border-radius:999px; border:none; cursor:pointer;
+    font-weight:700; color:#fff; display:inline-flex; align-items:center; gap:.6rem;
+    box-shadow:0 6px 18px rgba(0,0,0,.25); transition:transform .18s, box-shadow .18s;
+    background: linear-gradient(135deg,var(--p),var(--s));
+  }
+  .btn:active{transform:translateY(2px)}
+  .btn.ghost{background:rgba(255,255,255,.04); color:var(--light); border:1px solid rgba(255,255,255,.04)}
+  .btn.fire{
+    background: linear-gradient(90deg,#ff3b3b,#ff8a00);
+    box-shadow: 0 8px 30px rgba(255,80,0,.15);
+  }
+
+  /* ---------- Theme menu ---------- */
+  .header-menu{
+    position:fixed; top:70px; right:16px; z-index:1200;
+    background: linear-gradient(180deg, rgba(20,20,30,.96), rgba(10,10,18,.96));
+    border-radius:12px; padding:.8rem; min-width:240px; display:none;
+    border:1px solid rgba(255,255,255,.03);
+    box-shadow:0 12px 40px rgba(0,0,0,.6);
+  }
+  .header-menu.active{display:block}
+  .theme-row{display:flex; gap:.5rem; flex-wrap:wrap; margin:.4rem 0}
+  .color-option{width:44px;height:44px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:transform .18s}
+  .color-option:hover{transform:scale(1.07); border-color:rgba(255,255,255,.12)}
+  .menu-actions{margin-top:.6rem; display:flex; flex-direction:column; gap:.4rem}
+  .menu-actions button{padding:.5rem .7rem;border-radius:8px;border:0; cursor:pointer; background:rgba(255,255,255,.02); color:var(--light); text-align:left}
+
+  /* ---------- Stats ---------- */
+  .stats-bar{display:flex; justify-content:center; gap:1.4rem; margin-top:1.6rem; flex-wrap:wrap; animation:slideDown .5s}
+  .stat-item{padding:.9rem 1rem; background: rgba(255,255,255,.02); border-radius:12px; border:1px solid var(--card-border); min-width:120px; text-align:center}
+  .stat-number{font-size:1.4rem; font-weight:700; background: linear-gradient(135deg,var(--p),var(--a)); -webkit-background-clip:text; -webkit-text-fill-color:transparent}
+  .stat-label{font-size:.82rem; color:#9aa4bf}
+
+  /* ---------- Layout ---------- */
+  .container{max-width:1200px; margin:0 auto; padding:2rem; position:relative; z-index:10}
+  .search-box{width:100%; max-width:540px; margin:1.6rem auto; padding:1rem; border-radius:999px;
+    background: rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.03); color:var(--light);
+    outline:0; font-size:1rem}
+  .breadcrumb{padding:1rem 0; color:var(--p); font-size:.9rem; margin-bottom:1rem}
+  .breadcrumb span{cursor:pointer; padding:.25rem .7rem; border-radius:20px; transition:all .15s}
+  .breadcrumb span:hover{background:rgba(99,102,241,.06)}
+
+  /* ---------- Grids ---------- */
+  .subjects-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.4rem; margin-top:1.2rem}
+  .subject-card{
+    background: linear-gradient(135deg, rgba(30,41,59,.88), rgba(15,23,42,.9));
+    border-radius:16px; padding:2rem; text-align:center; cursor:pointer; position:relative; overflow:hidden;
+    border:2px solid var(--card-border); transition:transform .28s, box-shadow .28s, border-color .28s;
+  }
+  .subject-card:hover{transform:translateY(-10px); box-shadow:var(--accent-glow); border-color: rgba(255,255,255,.06)}
+  .subject-icon{font-size:3.6rem; margin-bottom:.9rem}
+  .subject-card h2{font-size:1.3rem; font-weight:700; color:var(--light); margin-bottom:.4rem}
+  .subject-card p{color:#98a3b6; font-size:.95rem}
+
+  /* badge */
+  .badge{ position:absolute; top:12px; right:12px; padding:.28rem .7rem; border-radius:18px; font-size:.78rem; font-weight:700;
+    background: linear-gradient(135deg,var(--a),#f59e0b); color:#fff; animation:pulse 2s infinite;
+  }
+
+  /* features */
+  .features-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; margin-top:1.2rem}
+  .feature-card{ padding:1.6rem; border-radius:12px; border:2px solid var(--card-border); background: linear-gradient(135deg, rgba(30,41,59,.86), rgba(15,23,42,.9));
+    position:relative; transition:transform .22s, box-shadow .22s; cursor:pointer;
+  }
+  .feature-card:hover{transform:translateY(-6px); box-shadow:var(--accent-glow)}
+
+  /* chapters */
+  .chapters-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:0.9rem; margin-top:1rem}
+  .chapter-item{
+    background: linear-gradient(135deg, rgba(25,30,40,.92), rgba(12,15,26,.95));
+    padding:1rem; border-radius:10px; display:flex; align-items:center; justify-content:space-between;
+    gap:.6rem; border:2px solid var(--card-border); transition:transform .18s, box-shadow .18s;
+  }
+  .chapter-item:hover{transform:translateY(-6px); box-shadow:var(--accent-glow)}
+  .chapter-left{display:flex; gap:.6rem; align-items:center}
+  .chapter-title{font-weight:700; color:var(--light)}
+  .chapter-actions{display:flex; gap:.5rem; align-items:center}
+
+  /* bookmark star */
+  .star{
+    font-size:1.1rem; cursor:pointer; opacity:.88; transition:transform .12s, color .12s;
+    padding:.28rem; border-radius:8px;
+  }
+  .star:hover{transform:scale(1.08)}
+  .star.saved{ color: #ffd166; text-shadow:0 6px 18px rgba(255,200,50,.08) }
+  .chapter-open{font-size:.9rem; padding:.45rem .7rem; border-radius:8px; background:rgba(255,255,255,.02); color:var(--light); cursor:pointer}
+
+  /* floating back button */
+  .back-floating{
+    position:fixed; left:22px; bottom:22px; z-index:1200;
+    width:56px; height:56px; border-radius:999px; display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(90deg,#ff4b4b,#ff8a2e); color:white; font-weight:800; font-size:1.3rem;
+    box-shadow:0 14px 42px rgba(255,90,40,.18); cursor:pointer; transition:transform .18s;
+    border:3px solid rgba(255,255,255,.04);
+  }
+  .back-floating:hover{transform:translateY(-6px) rotate(-4deg)}
+  .back-floating.hidden{display:none}
+
+  /* fire mode visuals - added class when fire mode active on document.documentElement */
+  .fire-override body, .fire-override{
+    /* no-op: body variable change happens via JS by toggling CSS vars */
+  }
+  .fire-override .subject-card,
+  .fire-override .feature-card,
+  .fire-override .chapter-item{
+    border-color: rgba(255,80,0,.95);
+    box-shadow: 0 8px 40px rgba(255,80,0,.12), 0 0 24px rgba(255,30,0,.06) inset;
+    background: linear-gradient(135deg, rgba(30,6,6,.95), rgba(40,8,8,.95));
+  }
+  .fire-override .badge{ background: linear-gradient(90deg,#ff7b4b,#ff3b3b) }
+  .fire-override .header{ box-shadow: 0 12px 50px rgba(255,80,0,.08) }
+
+  /* motivational floating quotes container */
+  .quotes-container{pointer-events:none; position:fixed; inset:0; z-index:1100; overflow:hidden}
+  .quote{
+    position:absolute; opacity:0; font-weight:700; font-size:1.05rem; color:#fff; padding:.4rem .6rem; border-radius:8px;
+    background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    text-shadow: 0 6px 20px rgba(255,0,20,.08);
+    transform: translate3d(0,0,0);
+    will-change: transform, opacity;
+  }
+  @keyframes floatUpFade{
+    0%{ transform: translateY(10px) scale(.95); opacity:0 }
+    10%{ opacity:1; transform: translateY(0) scale(1) }
+    100%{ transform: translateY(-140px) scale(1.02); opacity:0 }
+  }
+
+  /* small animations */
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  @keyframes slideDown{from{opacity:0; transform:translateY(-12px)}to{opacity:1; transform:none}}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+  /* responsive tweaks */
+  @media (max-width:720px){
+    .controls{right:10px; top:10px}
+    .header h1{font-size:1.5rem}
+    .logo{font-size:3rem}
+    .back-floating{width:48px;height:48px}
+  }
+</style>
+</head>
+<body>
+
+  <!-- Top controls -->
+  <div class="controls">
+    <button class="btn" id="themeToggleBtn" title="Theme">⚙️ Theme</button>
+
+  </div>
+
+  <!-- Theme / settings menu -->
+  <div class="header-menu" id="themeMenu" aria-hidden="true">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <strong style="color:var(--light)">Themes</strong>
+      <small style="color:#93a0c6;font-size:.82rem">saved locally</small>
+    </div>
+
+    <div class="theme-row" id="themeList">
+      <!-- JS will inject 10 color options here -->
+    </div>
+
+    <div style="margin-top:.6rem; display:flex; gap:.4rem; flex-direction:column;">
+      <button class="menu-action" id="showBookmarksBtn">⭐ My Bookmarks</button>
+      <button class="menu-action" id="clearBookmarksBtn">🗑️ Clear Bookmarks</button>
+      <button class="menu-action" id="clearProgressBtn">🔁 Clear Progress</button>
+      <div style="height:1px;background:rgba(255,255,255,.03);margin:.6rem 0;border-radius:2px"></div>
+      <div style="display:flex;align-items:center;gap:.6rem;">
+        <label style="color:#bfcaf0">Auto-fire override</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo" onclick="location.reload()" title="Click to refresh">🎓✨</div>
+    <h1>V.T.C.S_Exams.help</h1>
+    <p>Your Ultimate Study Companion</p>
+    <div class="stats-bar" style="margin-top:1rem">
+      <div class="stat-item"><div class="stat-number" id="studyStreak">0</div><div class="stat-label">Study Streak</div></div>
+      <div class="stat-item"><div class="stat-number">8</div><div class="stat-label">Subjects</div></div>
+      <div class="stat-item"><div class="stat-number">100+</div><div class="stat-label">Chapters</div></div>
+      <div class="stat-item"><div class="stat-number">24/7</div><div class="stat-label">AI Support</div></div>
+    </div>
+  </header>
+
+  <!-- Floating motivational quotes overlay (created by JS) -->
+  <div class="quotes-container" id="quotesContainer" aria-hidden="true"></div>
+
+  <!-- Back floating button -->
+  <div class="back-floating" id="backFloating" title="Back">←</div>
+
+  <!-- Main content -->
+  <main class="container">
+    <input id="searchBox" class="search-box" placeholder="Search subjects/chapters..." />
+
+    <div class="breadcrumb" id="breadcrumb"><span onclick="showSubjects()">🏠 Home</span></div>
+
+    <!-- Subjects -->
+    <section id="subjectsView" class="view active">
+      <h2 class="section-title">🎯 Choose Your Subject</h2>
+      <p class="section-subtitle">Explore comprehensive study materials</p>
+      <div class="subjects-grid" id="subjectsGrid"></div>
+    </section>
+
+    <!-- Features -->
+    <section id="featuresView" class="view" style="display:none">
+      <button class="back-btn" id="backBtnFeatures" onclick="showSubjects()">← Back</button>
+      <h2 class="section-title" id="subjectTitle"></h2>
+      <p class="section-subtitle">Select a resource type</p>
+      <div class="features-grid" id="featuresGrid"></div>
+    </section>
+
+    <!-- Chapters -->
+    <section id="chaptersView" class="view" style="display:none">
+      <button class="back-btn" id="backBtnChapters" onclick="showFeatures()">← Back</button>
+      <h2 class="section-title" id="featureTitle"></h2>
+      <div id="availabilityStatus" style="color:#94a3b8;margin-bottom:1rem"></div>
+      <div class="chapters-grid" id="chaptersGrid"></div>
+    </section>
+
+    <!-- Bookmarks view (dynamically shown) -->
+    <section id="bookmarksView" class="view" style="display:none">
+      <button class="back-btn" onclick="showSubjects()">← Back</button>
+      <h2 class="section-title">⭐ My Bookmarks</h2>
+      <p class="section-subtitle">Tap a bookmark to open that chapter</p>
+      <div class="chapters-grid" id="bookmarksGrid" style="margin-top:1rem"></div>
+    </section>
+
+  </main>
+
+
+<script>
+/* ===========================
+   App state and persistence
+   =========================== */
+const STORAGE = {
+  THEME: 'vtcs_theme_v3',
+  FIRE: 'vtcs_fire_v3',
+  FAVORITES: 'vtcs_favorites_v3',
+  VIEWED: 'vtcs_viewed_v3'
+};
+
+let s = '', f = ''; // current subject and feature
+let subjects = ['Mathematics','Science','History','Geography','Political Science','Economics','AI','English'];
+let icons = ['📐','🔬','📜','🌍','⚖️','💰','🤖','📚'];
+
+const cfg = {
+  Mathematics: {'Important Questions':16,'Mind Maps':16,'Worksheets':16,'Premium Handwritten Notes':16},
+  Science: {'Important Questions':13,'Mind Maps':13,'Worksheets':13,'Premium Handwritten Notes':13},
+  History: {'Important Questions':10,'Mind Maps':10,'Worksheets':10,'Premium Handwritten Notes':10},
+  Geography: {'Important Questions':8,'Mind Maps':8,'Worksheets':8,'Premium Handwritten Notes':8},
+  'Political Science': {'Important Questions':10,'Mind Maps':10,'Worksheets':10,'Premium Handwritten Notes':10},
+  Economics: {'Important Questions':12,'Mind Maps':12,'Worksheets':12,'Premium Handwritten Notes':12},
+  AI: {'Important Questions':10,'Mind Maps':10,'Worksheets':10,'Premium Handwritten Notes':10},
+  English: {'Important Questions':15,'Mind Maps':15,'Worksheets':15,'Premium Handwritten Notes':15}
+};
+
+// Example link map (keep as before)
+const lnk = {};
+// Science → Premium Handwritten Notes
+lnk['Science-Premium Handwritten Notes-1'] = 'https://drive.google.com/file/d/1dfK2aQNZjVK-67gRt_WobnILc1DUYVbH/view?usp=sharing';
+lnk['Science-Premium Handwritten Notes-2'] = 'https://drive.google.com/file/d/1nf9KlseDp0kCLq6Vb-c4S5d73nJGRIzQ/view?usp=sharing';
+lnk['Science-Premium Handwritten Notes-3'] = 'https://drive.google.com/file/d/1nWiIDQQJcilOGkznhfY0QNKgr5GmRxh_/view?usp=sharing';
+lnk['Science-Premium Handwritten Notes-5'] = 'https://drive.google.com/file/d/192brCA-X2zWSQZ2vPFnapyb04ArOKraA/view?usp=drive_link';
+lnk['Science-Premium Handwritten Notes-6'] = 'https://drive.google.com/file/d/1qktqAWKlY2Hov7LbSt0017Xf54x5m_V1/view?usp=sharing';
+lnk['Science-Premium Handwritten Notes-7'] = 'https://drive.google.com/file/d/1jypqQWc_0dY9JTJfo1rmU6cnuxDp6PSq/view?usp=sharing';
+lnk['Science-Premium Handwritten Notes-9'] = 'https://drive.google.com/file/d/1rFH1uPI3NJiWefIaAu8opZcA5vqUWVi5/view?usp=sharing';
+lnk['Science-Premium Handwritten Notes-10'] = 'https://drive.google.com/file/d/1TV7eGiz5c0YTJ0bL96JM5phTBIPAUSJM/view?usp=sharing';
+lnk['Science-Premium Handwritten Notes-11'] = 'https://drive.google.com/file/d/1FGe3330kRyau91mhWciegEGzoAYh4msU/view?usp=sharing';
+lnk['Science-Premium Handwritten Notes-12'] = 'https://drive.google.com/file/d/16raABqnLb8y1iFKbi9pyliuIPKpeKAz7/view?usp=sharing';
+lnk['Science-Premium Handwritten Notes-13'] = 'https://drive.google.com/file/d/1RY5sZFtMRekpZBp45RQdtKZ7QcW2Ovw9/view?usp=sharing';
+
+/* Favorites (bookmarks) and viewed sets, persisted */
+let favorites = new Set(JSON.parse(localStorage.getItem(STORAGE.FAVORITES) || '[]'));
+let viewed = new Set(JSON.parse(localStorage.getItem(STORAGE.VIEWED) || '[]'));
+
+/* Theme list (10 themes) */
+const THEMES = [
+  { id:'royal', name:'Royal Purple', bg:'#0b0426', bg2:'#2b0b5e', p:'#7c3aed', s:'#a78bfa' },
+  { id:'ocean', name:'Ocean Blue', bg:'#021b2c', bg2:'#063a5a', p:'#0ea5e9', s:'#60a5fa' },
+  { id:'emerald', name:'Emerald Green', bg:'#02160c', bg2:'#053e2b', p:'#10b981', s:'#34d399' },
+  { id:'ruby', name:'Ruby Red', bg:'#2b0707', bg2:'#5b0b0b', p:'#ff3b3b', s:'#ff7b7b' },
+  { id:'sunrise', name:'Sunrise Orange', bg:'#2b1400', bg2:'#7a2b00', p:'#ff8a00', s:'#ffb86b' },
+  { id:'arctic', name:'Arctic Cyan', bg:'#021f26', bg2:'#06323a', p:'#06b6d4', s:'#67e8f9' },
+  { id:'lavender', name:'Lavender Dream', bg:'#100621', bg2:'#47255f', p:'#c084fc', s:'#e9d5ff' },
+  { id:'cosmic', name:'Cosmic Pink', bg:'#1f0217', bg2:'#60163a', p:'#fb7185', s:'#fda4af' },
+  { id:'midnight', name:'Midnight Shadow', bg:'#030416', bg2:'#0e1323', p:'#7c3aed', s:'#60a5fa' },
+  { id:'firestorm', name:'Firestorm', bg:'#2a0600', bg2:'#4e0a00', p:'#ff3b3b', s:'#ff8a00' }
+];
+
+/* Fire mode state */
+let fireState = JSON.parse(localStorage.getItem(STORAGE.FIRE) || 'null') || { on:false, startedAt:null };
+
+/* Motivational quotes (mix of study & fun) */
+const QUOTES = [
+  "Grind now, shine later 🔥",
+  "Focus beats talent ✨",
+  "One more chapter!",
+  "No excuses — just results 💪",
+  "Let’s gooo! 🚀",
+  "You're on fire! 🔥",
+  "Keep pushing — crush it",
+  "Study hard, flex harder",
+  "Small steps, big wins",
+  "Stay curious — stay winning"
+];
+
+/* -------------------------
+   Utilities
+   ------------------------- */
+function saveFavorites(){ localStorage.setItem(STORAGE.FAVORITES, JSON.stringify([...favorites])) }
+function saveViewed(){ localStorage.setItem(STORAGE.VIEWED, JSON.stringify([...viewed])) }
+function saveTheme(themeId){ localStorage.setItem(STORAGE.THEME, themeId) }
+function loadTheme(){ return localStorage.getItem(STORAGE.THEME) || null }
+function saveFire(){ localStorage.setItem(STORAGE.FIRE, JSON.stringify(fireState)) }
+
+/* -------------------------
+   Theme UI building
+   ------------------------- */
+const themeListEl = document.getElementById('themeList');
+THEMES.forEach(t=>{
+  const d = document.createElement('div');
+  d.className='color-option';
+  d.title = t.name;
+  d.style.background = `linear-gradient(135deg, ${t.bg}, ${t.bg2})`;
+  d.onclick = ()=>applyTheme(t.id);
+  themeListEl.appendChild(d);
+});
+
+function applyTheme(themeId){
+  const t = THEMES.find(x=>x.id===themeId);
+  if(!t) return;
+  document.documentElement.style.setProperty('--bg', t.bg);
+  document.documentElement.style.setProperty('--bg2', t.bg2);
+  document.documentElement.style.setProperty('--p', t.p);
+  document.documentElement.style.setProperty('--s', t.s);
+  document.documentElement.style.setProperty('--a', t.s);
+  saveTheme(themeId);
+}
+
+/* Load saved theme on start (if exists) */
+const savedTheme = loadTheme();
+if(savedTheme){ applyTheme(savedTheme) }
+
+/* Toggle theme menu */
+const themeToggleBtn = document.getElementById('themeToggleBtn');
+const themeMenu = document.getElementById('themeMenu');
+themeToggleBtn.addEventListener('click', ()=> themeMenu.classList.toggle('active'));
+
+/* Clear bookmarks / progress */
+document.getElementById('clearBookmarksBtn').addEventListener('click', ()=>{
+  if(confirm('Clear all bookmarks?')){ favorites.clear(); saveFavorites(); renderCurrentView(); alert('Bookmarks cleared') }
+});
+document.getElementById('clearProgressBtn').addEventListener('click', ()=>{
+  if(confirm('Clear all progress (viewed)?')){ viewed.clear(); saveViewed(); updateStreak(); renderCurrentView(); alert('Progress cleared') }
+});
+
+/* My Bookmarks */
+document.getElementById('showBookmarksBtn').addEventListener('click', ()=> {
+  showBookmarksView();
+  themeMenu.classList.remove('active');
+});
+
+/* =======================
+   Rendering functions
+   ======================= */
+function showSubjects(){
+  s=''; f='';
+  setActiveView('subjectsView');
+  document.getElementById('breadcrumb').innerHTML = `<span onclick="showSubjects()">🏠 Home</span>`;
+  renderSubjects();
+  updateStreak();
+}
+
+function renderSubjects(){
+  const g = document.getElementById('subjectsGrid');
+  g.innerHTML = '';
+  const badges = [{badge:'🔥 Popular', subject:'Mathematics'}, {badge:'⭐ Trending', subject:'Science'}];
+  subjects.forEach((sub,i)=>{
+    const card = document.createElement('div');
+    card.className = 'subject-card';
+    card.onclick = ()=> showFeatures(sub);
+    if(badges.some(b=>b.subject===sub)){
+      const b = document.createElement('div'); b.className='badge'; b.textContent = badges.find(x=>x.subject===sub).badge;
+      card.appendChild(b);
+    }
+    const icon = document.createElement('div'); icon.className='subject-icon'; icon.innerText = icons[i];
+    const h2 = document.createElement('h2'); h2.textContent = sub;
+    const p = document.createElement('p'); p.textContent = `${sub} materials & resources`;
+    card.appendChild(icon); card.appendChild(h2); card.appendChild(p);
+    g.appendChild(card);
+  });
+}
+
+function showFeatures(sub){
+  if(sub) s = sub;
+  setActiveView('featuresView');
+  document.getElementById('subjectTitle').textContent = s;
+  document.getElementById('breadcrumb').innerHTML = `<span onclick="showSubjects()">🏠 Home</span> > <span onclick="showFeatures('${s}')">${s}</span>`;
+  renderFeatures();
+}
+
+function renderFeatures(){
+  const fg = document.getElementById('featuresGrid');
+  fg.innerHTML = '';
+  const features = ['Important Questions','Mind Maps','Worksheets','Premium Handwritten Notes'];
+  const icons2 = ['📝','🧠','📄','✍️'];
+  const desc = ['Exam prep','Visual learning','Practice','Handcrafted'];
+  features.forEach((ft,i)=>{
+    const card = document.createElement('div'); card.className='feature-card';
+    card.onclick = ()=> showChapters(ft);
+    const ic = document.createElement('div'); ic.className='feature-icon'; ic.textContent = icons2[i];
+    const h3 = document.createElement('h3'); h3.textContent = ft;
+    const p = document.createElement('p'); p.textContent = desc[i];
+    card.appendChild(ic); card.appendChild(h3); card.appendChild(p);
+    fg.appendChild(card);
+  });
+}
+
+function showChapters(ft){
+  f = ft;
+  setActiveView('chaptersView');
+  document.getElementById('featureTitle').textContent = ft;
+  const n = cfg[s]?.[ft] || 20;
+  const available = Object.keys(lnk).filter(k=>k.startsWith(s+'-'+ft+'-')).length;
+  document.getElementById('availabilityStatus').textContent = `📊 Available: ${available}/${n} chapters`;
+  document.getElementById('breadcrumb').innerHTML = `<span onclick="showSubjects()">🏠 Home</span> > <span onclick="showFeatures('${s}')">${s}</span> > <span>${ft}</span>`;
+  renderChapters(n);
+}
+
+function renderChapters(n){
+  const g = document.getElementById('chaptersGrid'); g.innerHTML='';
+  for(let i=1;i<=n;i++){
+    const key = `${s}-${f}-${i}`;
+    const item = document.createElement('div'); item.className='chapter-item';
+    // left: title
+    const left = document.createElement('div'); left.className='chapter-left';
+    const title = document.createElement('div'); title.className='chapter-title'; title.textContent = `Chapter ${i}`;
+    left.appendChild(title);
+    // actions
+    const actions = document.createElement('div'); actions.className='chapter-actions';
+    // bookmark star
+    const star = document.createElement('div'); star.className='star'; star.innerHTML = favorites.has(key) ? '★' : '☆';
+    if(favorites.has(key)) star.classList.add('saved');
+    star.title = favorites.has(key) ? 'Remove bookmark' : 'Add bookmark';
+    star.onclick = (e)=>{
+      e.stopPropagation();
+      toggleBookmark(key, title.textContent);
+      star.innerHTML = favorites.has(key) ? '★' : '☆';
+      star.classList.toggle('saved', favorites.has(key));
+      star.title = favorites.has(key) ? 'Remove bookmark' : 'Add bookmark';
+    };
+    // open button or link indicator
+    const openBtn = document.createElement('button'); openBtn.className='chapter-open';
+    const link = lnk[key];
+    if(link){
+      openBtn.textContent = 'Open';
+      openBtn.onclick = (ev)=>{ ev.stopPropagation(); window.open(link, '_blank'); viewed.add(key); saveViewed(); updateStreak() }
+    } else {
+      openBtn.textContent = 'Coming soon';
+      openBtn.disabled = false;
+      openBtn.onclick = ()=> alert(`Chapter ${i} - ${s} ${f}\n\nContent coming soon!`);
+    }
+    actions.appendChild(star); actions.appendChild(openBtn);
+    item.appendChild(left); item.appendChild(actions);
+    // clicking whole item opens link or alert
+    item.onclick = ()=> {
+      if(link){ window.open(link,'_blank'); viewed.add(key); saveViewed(); updateStreak() }
+      else alert(`Chapter ${i} - ${s} ${f}\n\nContent coming soon!`);
+    };
+    g.appendChild(item);
+  }
+}
+
+/* Bookmarks view */
+function showBookmarksView(){
+  setActiveView('bookmarksView');
+  document.getElementById('breadcrumb').innerHTML = `<span onclick="showSubjects()">🏠 Home</span> > <span>Bookmarks</span>`;
+  renderBookmarks();
+}
+function renderBookmarks(){
+  const grid = document.getElementById('bookmarksGrid'); grid.innerHTML = '';
+  const saved = [...favorites];
+  if(saved.length === 0){
+    grid.innerHTML = `<div style="color:#9aa4bf;padding:1rem">No bookmarks yet</div>`;
+    return;
+  }
+  saved.forEach(k=>{
+    const parts = k.split('-'); // subject-feature-index
+    const idx = parts.length-1;
+    const ch = parts[idx];
+    const feature = parts.slice(1, idx).join('-');
+    const subject = parts[0];
+    const item = document.createElement('div'); item.className = 'chapter-item';
+    const left = document.createElement('div'); left.className='chapter-left';
+    const title = document.createElement('div'); title.className='chapter-title'; title.textContent = `${subject} • ${feature} • Chapter ${ch}`;
+    left.appendChild(title);
+    const actions = document.createElement('div'); actions.className='chapter-actions';
+    const openBtn = document.createElement('button'); openBtn.className='chapter-open';
+    const link = lnk[k];
+    if(link){ openBtn.textContent='Open'; openBtn.onclick = ()=> window.open(link,'_blank') } else { openBtn.textContent='Info'; openBtn.onclick = ()=> alert(`${subject} • ${feature} • Chapter ${ch}\nNo external link`) }
+    const removeBtn = document.createElement('div'); removeBtn.className='star saved'; removeBtn.style.cursor='pointer'; removeBtn.textContent='★';
+    removeBtn.title='Remove bookmark'; removeBtn.onclick = (e)=>{ e.stopPropagation(); favorites.delete(k); saveFavorites(); renderBookmarks(); renderCurrentView(); }
+    actions.appendChild(openBtn); actions.appendChild(removeBtn);
+    item.appendChild(left); item.appendChild(actions);
+    grid.appendChild(item);
+  });
+}
+
+/* Helper to re-render whatever view is active */
+function renderCurrentView(){
+  if(document.getElementById('subjectsView').style.display !== 'none') renderSubjects();
+  if(document.getElementById('featuresView').style.display !== 'none') renderFeatures();
+  if(document.getElementById('chaptersView').style.display !== 'none') {
+    const n = cfg[s]?.[f] || 20; renderChapters(n);
+  }
+  if(document.getElementById('bookmarksView').style.display !== 'none') renderBookmarks();
+}
+
+/* Set the visible view */
+function setActiveView(id){
+  ['subjectsView','featuresView','chaptersView','bookmarksView'].forEach(v=>{
+    const el = document.getElementById(v);
+    if(!el) return;
+    if(v === id){ el.style.display = 'block' } else { el.style.display = 'none' }
+  });
+  // back-floating visibility
+  const bf = document.getElementById('backFloating');
+  bf.classList.toggle('hidden', id === 'subjectsView');
+}
+
+/* Bookmark toggle */
+function toggleBookmark(key, titleText){
+  if(favorites.has(key)){ favorites.delete(key) } else { favorites.add(key) }
+  saveFavorites(); renderCurrentView();
+}
+
+/* Update streak */
+function updateStreak(){
+  document.getElementById('studyStreak').textContent = viewed.size;
+}
+
+/* Search */
+document.getElementById('searchBox').addEventListener('input', (e)=>{
+  const q = e.target.value.trim().toLowerCase();
+  if(!q) return renderCurrentView();
+  // filter subjects by name
+  const filtered = subjects.filter(x => x.toLowerCase().includes(q));
+  const g = document.getElementById('subjectsGrid'); g.innerHTML='';
+  filtered.forEach(sub=>{
+    const idx = subjects.indexOf(sub);
+    const card = document.createElement('div'); card.className='subject-card'; card.onclick=()=>showFeatures(sub);
+    const icon = document.createElement('div'); icon.className='subject-icon'; icon.textContent = icons[idx];
+    const h2 = document.createElement('h2'); h2.textContent = sub;
+    const p = document.createElement('p'); p.textContent = 'materials & resources';
+    card.appendChild(icon); card.appendChild(h2); card.appendChild(p);
+    g.appendChild(card);
+  });
+});
+
+/* Back floating click */
+document.getElementById('backFloating').addEventListener('click', ()=>{
+  // if in chapters -> go to features; if in features -> subjects; if bookmarks -> subjects
+  if(document.getElementById('chaptersView').style.display !== 'none'){ showFeatures(s) } 
+  else if(document.getElementById('featuresView').style.display !== 'none'){ showSubjects(); }
+  else if(document.getElementById('bookmarksView').style.display !== 'none'){ showSubjects(); }
+});
+
+/* Keyboard shortcuts */
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 's') document.getElementById('searchBox').focus();
+  if(e.key === '?' || e.key === 'h') alert('Shortcuts:\n? = Help\nS = Search\nH = Home (press H)\nEsc = Close menu');
+  if(e.key === 'h') showSubjects();
+  if(e.key === 'Escape') themeMenu.classList.remove('active');
+});
+
+/* -------------------------
+   Fire Mode: visual override & quotes
+   ------------------------- */
+const fireBtn = document.getElementById('fireToggleBtn');
+const quotesContainer = document.getElementById('quotesContainer');
+
+/* Apply saved fire state on load */
+if(fireState.on){
+  enableFireMode(true);
+} else {
+  disableFireMode(true);
+}
+
+/* toggle */
+fireBtn.addEventListener('click', ()=>{
+  if(fireState.on) disableFireMode();
+  else enableFireMode();
+});
+
+/* enable: add class, set CSS vars override, start timer */
+let fireTimerInterval = null;
+function enableFireMode(init=false){
+  fireState.on = true;
+  fireState.startedAt = fireState.startedAt || Date.now();
+  saveFire();
+  document.documentElement.classList.add('fire-override');
+  // override CSS variables to fire theme
+  document.documentElement.style.setProperty('--bg', '#2a0600');
+  document.documentElement.style.setProperty('--bg2', '#4b0b00');
+  document.documentElement.style.setProperty('--p', '#ff4b4b');
+  document.documentElement.style.setProperty('--s', '#ff8a00');
+  document.documentElement.style.setProperty('--a', '#ffb86b');
+  // animate quotes periodically
+  if(!init) createFloatingQuote();
+  startFireTimer();
+  // add subtle page-glow
+  document.body.style.transition = 'background .18s';
+  fireBtn.textContent = '🔥 On';
+}
+
+/* disable */
+function disableFireMode(init=false){
+  fireState.on = false;
+  // do NOT clear startedAt so we can persist total time if desired
+  saveFire();
+  document.documentElement.classList.remove('fire-override');
+  // restore saved theme if any
+  const t = loadTheme(); if(t) applyTheme(t);
+  stopFireTimer();
+  clearAllQuotes();
+  fireBtn.textContent = '🔥 Fire';
+}
+
+/* create a single floating quote (random position, fade up) */
+function createFloatingQuote(){
+  if(!fireState.on) return;
+  const q = QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  const el = document.createElement('div'); el.className='quote';
+  el.textContent = q;
+  // random position within viewport (avoid edges)
+  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+  const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+  const left = Math.random() * (vw * 0.8) + (vw * 0.05);
+  const top = Math.random() * (vh * 0.65) + (vh * 0.05);
+  el.style.left = `${left}px`; el.style.top = `${top}px`;
+  // randomized style - warm color when fire mode on
+  el.style.background = 'linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02))';
+  el.style.color = '#ffdfe6';
+  el.style.padding = '.5rem .8rem';
+  el.style.boxShadow = '0 10px 30px rgba(255,70,20,.06)';
+  quotesContainer.appendChild(el);
+  // animate
+  const dur = 3500 + Math.random()*4000;
+  el.style.animation = `floatUpFade ${dur}ms ease-in forwards`;
+  // remove after animation
+  setTimeout(()=>{ if(el && el.parentNode) el.parentNode.removeChild(el); }, dur + 50);
+  // spawn more quotes at random intervals while fire active
+  if(fireState.on) setTimeout(()=>{ if(fireState.on) createFloatingQuote(); }, 800 + Math.random()*1600);
+}
+
+/* clear all quotes */
+function clearAllQuotes(){
+  quotesContainer.innerHTML = '';
+}
+
+/* Fire timer display & logic (counts up while fire is on) */
+function startFireTimer(){
+  const startTime = fireState.startedAt || Date.now();
+  saveFire();
+  if(fireTimerInterval) clearInterval(fireTimerInterval);
+  fireTimerInterval = setInterval(()=>{
+    // compute elapsed
+    const elapsed = Date.now() - startTime;
+    // optional: show elapsed in stat-area or as tooltip
+    const minutes = Math.floor(elapsed / 60000);
+    const seconds = Math.floor((elapsed % 60000) / 1000);
+    fireBtn.title = `Fire Mode active — elapsed ${minutes}m ${seconds}s`;
+  }, 900);
+}
+function stopFireTimer(){ if(fireTimerInterval) clearInterval(fireTimerInterval); fireTimerInterval = null; fireBtn.title = '' }
+
+/* =========================
+   Initialization & startup
+   ========================= */
+function init(){
+  renderSubjects();
+  updateStreak();
+
+  // set up initial visibility
+  showSubjects();
+
+  // render bookmarks if needed
+  // hook up other UI
+  document.getElementById('backBtnFeatures').onclick = showSubjects;
+  document.getElementById('backBtnChapters').onclick = ()=> showFeatures(s);
+
+  // bookmark changes persisted
+  saveFavorites(); saveViewed();
+}
+init();
+
+/* Small helper: re-render when local storage changed in other tabs */
+window.addEventListener('storage', (e)=>{
+  if(e.key === STORAGE.FAVORITES){ favorites = new Set(JSON.parse(e.newValue || '[]')); renderCurrentView(); }
+  if(e.key === STORAGE.VIEWED){ viewed = new Set(JSON.parse(e.newValue || '[]')); updateStreak(); }
+});
+
+/* minor helper to refresh current view after bookmark toggle */
+function renderCurrentView(){ renderCurrentView } // placeholder to satisfy calls above (actual re-render used directly)
+
+/* Expose some functions to the global scope for inline onclicks (breadcrumb uses them) */
+window.showSubjects = showSubjects;
+window.showFeatures = showFeatures;
+window.showChapters = showChapters;
+window.toggleChat = toggleChat;
+window.sendMessage = sendMessage;
+
+</script>
+</body>
+</html>
